@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+    function loadScript() {
+      const script = document.createElement('script');
+      script.src = "https://smartcaptcha.yandexcloud.net/captcha.js";
+      script.defer = true;
+
+      script.onload = function () {
+        console.log('Script loaded');
+      };
+
+      document.head.appendChild(script);
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const lang = urlParams.get('lang') || 'ru';
+
+    const langInterval = setInterval(() => {
+      if (document.getElementById('captcha')) {
+        clearInterval(langInterval);
+        console.log('cleared');
+
+        document.getElementById('captcha').innerHTML = `<div class="smart-captcha" data-sitekey="ysc1_ox4RnfenN8VFGK2AQuj4HaS9gRd4jwqo1BDggkqe0e77823f" data-hl="${lang}">`;
+        document.getElementById('text').innerHTML = lang === 'ru' ? 'Пожалуйста, подтвердите, что запросы отправляли вы, а не робот' : 'Please confirm that you sent the requests and not a robot';
+        loadScript()
+      }
+    }, 1);
+
+  </script>
+  <link href="./SFProDisplay-Regular.ttf" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0" />
+
+  <script src="https://smartcaptcha.yandexcloud.net/captcha.js" defer></script>
+  <style>
+    @font-face {
+      font-family: 'SFProDisplay';
+      src: url('./SFProDisplay-Regular.ttf') format('ttf')
+    }
+
+    html {
+      height: 100%;
+    }
+
+    body {
+      height: 439px !important;
+      font-family: 'SFProDisplay', sans-serif;
+      overflow: hidden;
+      height: 100%;
+      padding: 16px;
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    #content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #text {
+      text-align: center;
+      margin: 12px 0px;
+    }
+
+    #captcha {}
+
+    .smart-captcha {
+      min-width: auto !important;
+    }
+  </style>
+  <script>
+    const successInterval = setInterval(() => {
+      if (document.getElementById('captcha')?.getElementsByClassName('smart-captcha')[0]?.getElementsByTagName('input').length) {
+        if (document.getElementById('captcha').getElementsByClassName('smart-captcha')[0].getElementsByTagName('input')[0].value) {
+          clearInterval(successInterval);
+          setTimeout(() => {window.ReactNativeWebView?.postMessage(JSON.stringify({captchaPassed: true}))}, 1000)
+        }
+      }
+    }, 200)
+    window.addEventListener('load', () => {
+      window.ReactNativeWebView.postMessage(JSON.stringify({pageLoaded: true}));
+    });
+
+    setInterval(() => {
+      if (document.getElementsByClassName('SmartCaptcha-Overlay_visible').length) {
+        window.ReactNativeWebView?.postMessage(JSON.stringify({overlayVisible: true}));
+      } else {
+        window.ReactNativeWebView?.postMessage(JSON.stringify({overlayVisible: false}));
+      }
+    }, 10);
+  </script>
+</head>
+
+<body>
+  <div id="content">
+    <div id="header">
+      <svg style="min-width: 44px; min-height: 44px;" xmlns="http://www.w3.org/2000/svg" width="45" height="44"
+        viewBox="0 0 45 44" fill="none">
+        <path
+          d="M22.5 43C25.2578 43 27.9885 42.4568 30.5364 41.4015C33.0842 40.3461 35.3992 38.7993 37.3492 36.8492C39.2993 34.8992 40.8461 32.5842 41.9015 30.0364C42.9568 27.4885 43.5 24.7578 43.5 22C43.5 19.2422 42.9568 16.5115 41.9015 13.9636C40.8461 11.4158 39.2993 9.10079 37.3492 7.15076C35.3992 5.20073 33.0842 3.65388 30.5364 2.59853C27.9885 1.54318 25.2578 1 22.5 1C16.9305 1 11.589 3.21249 7.65076 7.15076C3.71249 11.089 1.5 16.4305 1.5 22C1.5 27.5695 3.71249 32.911 7.65076 36.8492C11.589 40.7875 16.9305 43 22.5 43Z"
+          fill="#FC3F1D" />
+        <path
+          d="M25.8001 35.13H30.3701V8.85999H23.7101C17.0101 8.85999 13.4901 12.3 13.4901 17.36C13.4901 21.38 15.4201 23.79 18.8601 26.24L12.8701 35.12H17.8401L24.5001 25.18L22.1801 23.64C19.3801 21.74 18.0101 20.28 18.0101 17.1C18.0101 14.31 19.9801 12.42 23.7301 12.42H25.7801V35.12H25.7901L25.8001 35.13Z"
+          fill="white" />
+      </svg>
+      <div id="text"></div>
+    </div>
+    <div id="captcha"></div>
+  </div>
+  </div>
+</body>
+
+</html>
